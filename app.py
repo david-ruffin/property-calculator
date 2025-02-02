@@ -10,14 +10,19 @@ with st.sidebar:
     st.header("Property Details")
     purchase_price = st.number_input("Purchase Price", value=650000, step=1000)
     down_payment_pct = st.slider("Down Payment %", 0, 100, 20) / 100
+    
+    # Calculate and display the actual down payment amount
+    amount_down = purchase_price * down_payment_pct
+    st.metric("Down Payment Amount", f"${amount_down:,.2f}")
+    
     interest_rate = st.slider("Interest Rate %", 0.0, 10.0, 2.0) / 100
     loan_years = st.selectbox("Loan Term (Years)", [15, 30], index=0)
     monthly_rent = st.number_input("Expected Monthly Rent", value=5000, step=100)
     
     st.header("Location")
     state = st.selectbox("State", 
-                        ["AZ", "CA", "IN", "NV", "TX", "MI"],
-                        index=4)
+                          ["AZ", "CA", "IN", "NV", "TX", "MI"],
+                          index=4)
     
     TAX_RATES = {
         "AZ": 0.0062,
@@ -33,8 +38,8 @@ loan_amount = purchase_price * (1 - down_payment_pct)
 monthly_rate = interest_rate / 12
 num_payments = loan_years * 12
 
-# Monthly P&I Payment
-monthly_pi = loan_amount * (monthly_rate * (1 + monthly_rate)**num_payments) / ((1 + monthly_rate)**num_payments - 1)
+# Monthly Principal & Interest Payment
+monthly_pi = loan_amount * (monthly_rate * (1 + monthly_rate) ** num_payments) / ((1 + monthly_rate) ** num_payments - 1)
 
 # Other monthly costs
 monthly_insurance = (purchase_price * 0.01) / 12
@@ -92,7 +97,7 @@ with col2:
 
 # Investment status
 st.header("Investment Status")
-if cash_flows[0] > 0:  # If profitable at 75% occupancy
+if cash_flows[0] > 0:  # Profitable at 75% occupancy
     st.success("✅ Good Investment: Profitable even at 75% occupancy")
 else:
     st.error("❌ High Risk: Not profitable at 75% occupancy")
