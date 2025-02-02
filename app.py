@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -33,6 +32,10 @@ with st.sidebar:
         "TX": 0.0170,
         "MI": 0.0321
     }
+    
+    # Display the tax rate for the selected state (converted to a percentage)
+    selected_tax_rate = TAX_RATES[state]
+    st.metric("Tax Rate", f"{selected_tax_rate * 100:.2f}%")
 
 # Calculations
 loan_amount = purchase_price * (1 - down_payment_pct)
@@ -81,7 +84,6 @@ with col2:
         "Annual ROI": annual_returns
     })
     
-    # Color formatting based on values
     def color_negative_red(val):
         color = 'red' if val < 0 else 'green'
         return f'color: {color}'
