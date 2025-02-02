@@ -11,7 +11,7 @@ with st.sidebar:
     purchase_price = st.number_input("Purchase Price", value=650000, step=1000)
     down_payment_pct = st.slider("Down Payment %", 0, 100, 20) / 100
     
-    # Calculate and display the actual down payment amount
+    # Display the actual down payment amount
     amount_down = purchase_price * down_payment_pct
     st.metric("Down Payment Amount", f"${amount_down:,.2f}")
     
@@ -38,18 +38,19 @@ loan_amount = purchase_price * (1 - down_payment_pct)
 monthly_rate = interest_rate / 12
 num_payments = loan_years * 12
 
-# Monthly Principal & Interest Payment
-monthly_pi = loan_amount * (monthly_rate * (1 + monthly_rate) ** num_payments) / ((1 + monthly_rate) ** num_payments - 1)
+# Monthly Principal & Interest Payment (Mortgage Payment)
+monthly_pi = loan_amount * (monthly_rate * (1 + monthly_rate)**num_payments) / ((1 + monthly_rate)**num_payments - 1)
 
-# Other monthly costs
+# Other monthly costs (Overhead)
 monthly_insurance = (purchase_price * 0.01) / 12
 monthly_tax = (purchase_price * TAX_RATES[state]) / 12
 pm_fee = monthly_rent * 0.10
 maintenance = 250
 
+# Total monthly payment including overhead
 total_monthly = monthly_pi + monthly_insurance + monthly_tax + pm_fee + maintenance
 
-# Cash flow analysis
+# Cash flow analysis for different occupancy rates
 occupancy_rates = [0.75, 0.90, 1.0]
 cash_flows = []
 annual_returns = []
@@ -61,7 +62,7 @@ for rate in occupancy_rates:
     cash_flows.append(cash_flow)
     annual_returns.append(annual_return)
 
-# Display results
+# Display results: Monthly Expenses and Investment Returns
 col1, col2 = st.columns(2)
 
 with col1:
@@ -80,7 +81,6 @@ with col2:
         "Annual ROI": annual_returns
     })
     
-    # Color formatting based on values
     def color_negative_red(val):
         color = 'red' if val < 0 else 'green'
         return f'color: {color}'
@@ -95,19 +95,56 @@ with col2:
         hide_index=True
     )
 
-# Investment status
+# New Loan Summary Section
+st.header("Loan Summary")
+
+# Calculate additional metrics
+monthly_overhead = monthly_insurance + monthly_tax + pm_fee + maintenance
+total_interest = (monthly_pi * num_payments) - loan_amount
+total_cost = total_monthly * num_payments
+
+summary_df = pd.DataFrame({
+    "Metric": [
+        "Loan Amount",
+        "Monthly Payment (P&I)",
+        "Monthly Overhead",
+        "Total Monthly Payment",
+        "Number of Payments",
+        "Total Interest",
+        "Total Cost of Loan"
+    ],
+    "Value": [
+        loan_amount,
+        monthly_pi,
+        monthly_overhead,
+        total_monthly,
+        num_payments,
+        total_interest,
+        total_cost
+    ]
+})
+
+# Format values: use currency formatting for monetary amounts but not for the number of payments.
+summary_df["Formatted Value"] = summary_df.apply(
+    lambda row: f"{row['Value']}" if row["Metric"] == "Number of Payments" 
+                else f"${row['Value']:,.2f}",
+    axis=1
+)
+st.table(summary_df[["Metric", "Formatted Value"]])
+
+# Investment status based on 75% occupancy
 st.header("Investment Status")
-if cash_flows[0] > 0:  # Profitable at 75% occupancy
+if cash_flows[0] > 0:
     st.success("✅ Good Investment: Profitable even at 75% occupancy")
 else:
     st.error("❌ High Risk: Not profitable at 75% occupancy")
 
-# Amortization Schedule
+# Amortization Schedule for the first 12 payments (1 year)
 st.header("Amortization Schedule")
 schedule = []
 balance = loan_amount
 
-for payment in range(1, 13):  # First year only
+for payment in range(1, 13):
     interest_payment = balance * monthly_rate
     principal_payment = monthly_pi - interest_payment
     balance = balance - principal_payment
@@ -129,7 +166,7 @@ st.dataframe(
     hide_index=True
 )
 
-# Balance Over Time chart
+# Loan Balance Over Time chart for the first year
 fig = px.line(
     schedule_df, 
     x="Payment", 
