@@ -5,6 +5,9 @@ import plotly.express as px
 st.set_page_config(layout="wide")
 st.title("Property Investment Calculator")
 
+# Property type selection
+property_type = st.radio("Property Type", ["Residential", "Commercial"], horizontal=True)
+
 # Initialize query params with defaults if not present
 if "purchase_price" not in st.query_params:
     st.query_params["purchase_price"] = "650000"
