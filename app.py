@@ -217,7 +217,7 @@ elif property_type == "Commercial":
     
     COMMERCIAL_INSURANCE_RATES = {
         "AZ": 0.005,
-        "CA": 0.005,
+        "CA": 0.0125,
         "IN": 0.005,
         "NV": 0.005,
         "TX": 0.005,
@@ -327,10 +327,11 @@ elif property_type == "Commercial":
     with col1:
         st.header("Operating Expenses")
         expenses_df = pd.DataFrame({
-            "Expense": ["Insurance", "Property Tax", "Property Management (4%)", "Other Operating Expenses"],
-            "Annual Amount": [annual_insurance, annual_property_tax, annual_pm_fee, comm_other_expenses]
+            "Expense": ["Purchase Loan P&I", "Property Insurance Insurance", "Property Taxes", "PM Fee", "All Other Operating Expenses"],
+            "Monthly Amount": [monthly_payment, annual_insurance/12, annual_property_tax/12, annual_pm_fee/12, comm_other_expenses/12],
+            "Annual Amount": [annual_debt_service, annual_insurance, annual_property_tax, annual_pm_fee, comm_other_expenses]
         })
-        st.dataframe(expenses_df.style.format({"Annual Amount": "${:,.0f}"}), hide_index=True)
+        st.dataframe(expenses_df.style.format({"Monthly Amount": "${:,.2f}", "Annual Amount": "${:,.0f}"}), hide_index=True)
         
         st.metric("Total Annual Operating Expenses", f"${annual_insurance + annual_property_tax + annual_pm_fee + comm_other_expenses:,.0f}")
     
@@ -348,6 +349,15 @@ elif property_type == "Commercial":
             ]
         })
         st.dataframe(analysis_df, hide_index=True)
+        
+        # Display Cash Down with color coding
+        st.write("**Cash Down:**")
+        if total_cash_down <= 500000:
+            st.markdown(f":green[${total_cash_down:,.0f}]")
+        elif total_cash_down <= 750000:
+            st.markdown(f":orange[${total_cash_down:,.0f}]")
+        else:
+            st.markdown(f":red[${total_cash_down:,.0f}]")
     
     # Deal evaluation
     st.header("Deal Evaluation")
