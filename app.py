@@ -204,6 +204,8 @@ elif property_type == "Commercial":
         st.query_params["comm_other_expenses"] = "5000"
     if "comm_loan_years" not in st.query_params:
         st.query_params["comm_loan_years"] = "25"
+    if "comm_interest_rate" not in st.query_params:
+        st.query_params["comm_interest_rate"] = "6.5"
     
     # Commercial tax and insurance rates
     COMMERCIAL_TAX_RATES = {
@@ -235,20 +237,22 @@ elif property_type == "Commercial":
             st.query_params["comm_state"] = comm_state
         
         # Purchase Price
-        comm_purchase_price = st.number_input("Purchase Price", value=int(st.query_params["comm_purchase_price"]), step=None, format="%d")
+        comm_purchase_price = st.number_input("Purchase Price", value=int(st.query_params["comm_purchase_price"]), step=None, format="%d", help="Purchase Price or Amount we want to offer")
         if comm_purchase_price != int(st.query_params["comm_purchase_price"]):
             st.query_params["comm_purchase_price"] = str(comm_purchase_price)
         
         st.write(f"**Purchase Price:** ${comm_purchase_price:,.0f}")
         
         # Down Payment %
-        comm_down_payment_pct = st.number_input("% Down Payment", value=int(st.query_params["comm_down_payment"]), min_value=0, max_value=100, step=1)
+        comm_down_payment_pct = st.number_input("% Down Payment", value=int(st.query_params["comm_down_payment"]), min_value=0, max_value=100, step=1, help="Standard % down is 25% for Non-owner occupied Resi loans. 30%+ may be required for hard money but the interest will be much higher.\n\nFor commercial loans of 5 units or more, the minimum down should be 30% down is a more safe bet, with 65% LTV more ideal for commercial lenders.\n\nTo evaluate whether more money down makes this a good deal or not, 1st try 100%. If the cash flow is not positive with 100% down, then it does not make sense at all at this price, with this rent, or with this overhead.")
         if comm_down_payment_pct != int(st.query_params["comm_down_payment"]):
             st.query_params["comm_down_payment"] = str(comm_down_payment_pct)
         
-        # Calculate Amount Down with color coding
+        # Calculate Amount Down with color coding 
         amount_down = comm_purchase_price * (comm_down_payment_pct / 100)
+        amount_down_help = "Conditional formatting is:\n≤ $500,000 = green\n>$500,000 and ≤ $750,000 = yellow\n>$750,000 = red\n\nThese are based on the parameters currently in place for raising debt free capital. This could mean liquidating other assets or getting other investors involved."
         
+        # Display Amount Down with color coding only (no visible explanation text)
         if amount_down <= 500000:
             st.markdown(f"**Amount Down:** :green[${amount_down:,.0f}]")
         elif amount_down <= 750000:
@@ -256,8 +260,13 @@ elif property_type == "Commercial":
         else:
             st.markdown(f"**Amount Down:** :red[${amount_down:,.0f}]")
         
+        # Closing Costs (calculated as 3% of purchase price, matching Excel formula J3=H3*0.03)
+        closing_costs = comm_purchase_price * 0.03
+        st.metric("Estimated Closing Costs", f"${closing_costs:,.0f}", help="Estimated closing costs @ 3% of purchase price")
+        
+        
         # Annual Gross Rents
-        comm_annual_gross_rents = st.number_input("Annual Gross Rents", value=int(st.query_params["comm_annual_gross_rents"]), step=1000)
+        comm_annual_gross_rents = st.number_input("Annual Gross Rents", value=int(st.query_params["comm_annual_gross_rents"]), step=1000, help="Typically provided in the listing on LoopNet, etc.")
         if comm_annual_gross_rents != int(st.query_params["comm_annual_gross_rents"]):
             st.query_params["comm_annual_gross_rents"] = str(comm_annual_gross_rents)
         
@@ -277,6 +286,11 @@ elif property_type == "Commercial":
             st.query_params["comm_other_expenses"] = str(comm_other_expenses)
         
         st.header("Loan Details")
+        # Interest Rate
+        comm_interest_rate_value = st.number_input("Interest Rate %", value=float(st.query_params["comm_interest_rate"]), min_value=0.0, max_value=20.0, step=0.1)
+        if abs(comm_interest_rate_value - float(st.query_params["comm_interest_rate"])) > 0.01:
+            st.query_params["comm_interest_rate"] = str(comm_interest_rate_value)
+        
         # Loan Period
         loan_years_options = list(range(1, 31))  # 1 to 30 years
         comm_loan_years = st.selectbox("Loan Period (Years)", loan_years_options, index=loan_years_options.index(int(st.query_params["comm_loan_years"])))
@@ -297,11 +311,13 @@ elif property_type == "Commercial":
     annual_pm_fee = comm_annual_gross_rents * 0.04  # 4% of gross rents
     
     # NOI Estimated calculation: (K4*(1-L5))-SUM(J8:J11)
-    noi_estimated = (comm_annual_gross_rents * (1 - comm_vacancy_rate/100)) - (annual_insurance + annual_property_tax + annual_pm_fee + comm_other_expenses)
+    # Excel formula: =(K4*(1-L5))-SUM(J8:J11) where J8:J11 are ONLY operating expenses (not debt service)
+    total_operating_expenses = annual_insurance + annual_property_tax + annual_pm_fee + comm_other_expenses
+    noi_estimated = (comm_annual_gross_rents * (1 - comm_vacancy_rate/100)) - total_operating_expenses
     
-    # Commercial loan calculations (user-defined years, 6.5%)
+    # Commercial loan calculations (user-defined years and rate)
     comm_loan_amount = comm_purchase_price - amount_down
-    comm_annual_interest_rate = 0.065
+    comm_annual_interest_rate = comm_interest_rate_value / 100
     comm_monthly_rate = comm_annual_interest_rate / 12
     comm_num_payments = comm_loan_years * 12
     
@@ -333,31 +349,35 @@ elif property_type == "Commercial":
         })
         st.dataframe(expenses_df.style.format({"Monthly Amount": "${:,.2f}", "Annual Amount": "${:,.0f}"}), hide_index=True)
         
+        with st.expander("📋 Expense Notes"):
+            st.write("**Property Insurance Insurance**: Rough estimate based on industry average. Double check this value for the specific property and zip code.")
+            st.write("**PM Fee**: Prop Mgmt Fees on commercial properties are generally 3-4% of gross rents received/collected, with a minimum typically established.")
+        
         st.metric("Total Annual Operating Expenses", f"${annual_insurance + annual_property_tax + annual_pm_fee + comm_other_expenses:,.0f}")
     
     with col2:
         st.header("Investment Analysis")
+        # Create Cash Down string with color
+        if total_cash_down <= 500000:
+            cash_down_display = f"${total_cash_down:,.0f}"
+        elif total_cash_down <= 750000:
+            cash_down_display = f"${total_cash_down:,.0f}"
+        else:
+            cash_down_display = f"${total_cash_down:,.0f}"
+            
         analysis_df = pd.DataFrame({
-            "Metric": ["Annual Gross Rents", "Adjusted Gross Income", "Annual NOI (Estimated)", "Annual Debt Service", "Annual Cash Flow", "Cash-on-Cash Return"],
+            "Metric": ["Annual Gross Rents", "Adjusted Gross Income", "Annual NOI (Estimated)", "Annual Debt Service", "Annual Cash Flow", "Cash-on-Cash Return", "Cash Down"],
             "Amount": [
                 f"${comm_annual_gross_rents:,.0f}",
                 f"${comm_annual_gross_rents * (1 - comm_vacancy_rate/100):,.0f}",
                 f"${noi_estimated:,.0f}",
                 f"${annual_debt_service:,.0f}",
                 f"${annual_cash_flow:,.0f}",
-                f"{cash_on_cash_return:.1f}%"
+                f"{cash_on_cash_return:.1f}%",
+                cash_down_display
             ]
         })
         st.dataframe(analysis_df, hide_index=True)
-        
-        # Display Cash Down with color coding
-        st.write("**Cash Down:**")
-        if total_cash_down <= 500000:
-            st.markdown(f":green[${total_cash_down:,.0f}]")
-        elif total_cash_down <= 750000:
-            st.markdown(f":orange[${total_cash_down:,.0f}]")
-        else:
-            st.markdown(f":red[${total_cash_down:,.0f}]")
     
     # Deal evaluation
     st.header("Deal Evaluation")
@@ -373,7 +393,7 @@ elif property_type == "Commercial":
     with summary_col1:
         st.metric("Purchase Price", f"${comm_purchase_price:,.0f}")
         st.metric("Down Payment", f"${amount_down:,.0f} ({comm_down_payment_pct}%)")
-        st.metric("Closing Costs", f"${closing_costs:,.0f}")
+        st.metric("Closing Costs", f"${closing_costs:,.0f}", help="closing costs @ 3%")
         st.metric("Total Cash Investment", f"${total_cash_down:,.0f}")
     
     with summary_col2:
@@ -383,6 +403,6 @@ elif property_type == "Commercial":
         
         # Color-coded cash flow metric
         if annual_cash_flow > 0:
-            st.markdown(f"**Annual Cash Flow:** :green[${annual_cash_flow:,.0f}]")
+            st.metric("Annual Cash Flow", f"${annual_cash_flow:,.0f}", delta="Positive cash flow", delta_color="normal")
         else:
-            st.markdown(f"**Annual Cash Flow:** :red[${annual_cash_flow:,.0f}]")
+            st.metric("Annual Cash Flow", f"${annual_cash_flow:,.0f}", delta="Negative cash flow", delta_color="inverse")
