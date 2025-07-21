@@ -42,12 +42,13 @@ The app will open in your browser at `http://localhost:8501`
 ### Commercial Parameters (from Excel)
 - **State**: State for tax/insurance rate lookup (default: TX)
 - **Purchase Price**: Commercial property purchase price (default: $1,970,000)
-- **% Down Payment**: Percentage of purchase price paid upfront (default: 30%)
-- **Amount Down**: Calculated field with color coding (Green ≤$500K, Yellow $500K-$750K, Red >$750K)
+- **% Down**: Percentage of purchase price paid upfront (default: 30%)
+- **Amount Down**: Calculated field with color coding (Green ≤$500K, Orange $500K-$750K, Red >$750K)
 - **Annual Gross Rents**: Expected annual rental income (default: $152,195)
-- **Annual NOI from Listing**: Net Operating Income from property listing (default: $106,548)
 - **Vacancy Rate**: Expected vacancy percentage (default: 3%)
 - **All Other Operating Expenses**: Additional annual operating costs (default: $5,000)
+- **Loan Interest Rate**: Adjustable interest rate (default: 6.5%)
+- **Loan Period**: Adjustable loan term from 1-30 years (default: 25 years)
 
 ## Investment Analysis
 
@@ -58,14 +59,18 @@ The app will open in your browser at `http://localhost:8501`
 - First-year loan amortization schedule with balance visualization
 
 ### Commercial Analysis (Excel-Based Formulas)
+- **Operating Expenses Table**: Shows both monthly and annual amounts for all expenses
+  - Purchase Loan P&I, Property Insurance, Property Taxes, PM Fee, All Other Operating Expenses
 - **NOI Calculation**: (Gross Rents × (1 - Vacancy Rate)) - Operating Expenses
-- **Operating Expenses**: Insurance + Property Tax + PM Fee (4% of gross rents) + Other Expenses
 - **Cash Flow Analysis**: NOI - Annual Debt Service  
 - **Cash-on-Cash Return**: Annual Cash Flow ÷ Total Cash Down
+- **Cash Down**: Color-coded display (Green ≤$500K, Orange $500K-$750K, Red >$750K)
+  - Calculated as: Closing Costs (3% of purchase) + Amount Down
 - **Deal Evaluation**: Color-coded results (Green = Cash Flow > 0, Red = Cash Flow ≤ 0)
-- **Total Cash Investment**: Closing Costs (3% of purchase) + Down Payment
-- **Commercial Loan Terms**: 25-year amortization at 6.5% interest
-- **State Lookup Tables**: Tax rates (AZ: 0.62%, CA: 1.25%, IN: 1.37%, NV: 0.65%, TX: 1.7%, MI: 3.21%) and Insurance rates (0.5% all states)
+- **Commercial Loan Terms**: User-adjustable period (1-30 years) and interest rate
+- **State Lookup Tables**: 
+  - Tax rates: AZ: 0.62%, CA: 1.25%, IN: 1.37%, NV: 0.65%, TX: 1.7%, MI: 3.21%
+  - Insurance rates: AZ: 0.5%, CA: 1.25%, IN: 0.5%, NV: 0.5%, TX: 0.5%, MI: 0.5%
 
 ## Excel Source File
 All commercial calculations are derived directly from: `Commercial_Prop_Screening_Tool.xlsx`
