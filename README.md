@@ -5,15 +5,18 @@ A Streamlit web application for analyzing residential and commercial property in
 ## Features
 
 - **Property Type Selection**: Toggle between Residential and Commercial property analysis with completely different inputs and calculations
+  - Clear explanation: "Residential: 4 units or less | Commercial: 5 units or more"
+  - Property type preserved in shareable URLs
 - **Residential Analysis**: Calculate monthly cash flow and annual ROI at different occupancy rates (75%, 90%, 100%)
 - **Commercial Analysis**: NOI-based analysis with cash-on-cash returns, state-based tax/insurance lookups, and commercial loan terms
 - **Excel-Driven Logic**: All commercial calculations sourced directly from `Commercial_Prop_Screening_Tool.xlsx` 
 - **Interactive Help Text**: Hover tooltips on key input fields provide contextual guidance
 - **Color-Coded Indicators**: Visual feedback for Amount Down thresholds and Annual Cash Flow status
 - **Loan Calculations**: Monthly principal & interest payments with user-adjustable terms (1-30 years)
-- **State-Specific Rates**: Tax and insurance rates for AZ, CA, IN, NV, TX, and MI
+- **State-Specific Rates**: Tax and insurance rates for AZ, CA, IN, NV, TX, and MI (defaults to California)
 - **Visual Charts**: Loan balance over time visualization for residential properties
-- **Shareable Links**: All parameters are preserved in the URL for easy sharing and bookmarking
+- **Responsive Input System**: All inputs update immediately without requiring multiple clicks or Enter presses
+- **Shareable Links**: All parameters including property type are preserved in the URL for easy sharing and bookmarking
 
 ## Installation
 
@@ -39,10 +42,10 @@ The app will open in your browser at `http://localhost:8501`
 - **Interest Rate %**: Annual interest rate for the loan
 - **Loan Term**: 15 or 30 year loan options
 - **Expected Monthly Rent**: Projected rental income
-- **State**: Select state for property tax calculations
+- **State**: Select state for property tax calculations (defaults to California)
 
 ### Commercial Parameters (from Excel)
-- **State**: State for tax/insurance rate lookup (default: TX)
+- **State**: State for tax/insurance rate lookup (defaults to California, located in Location section)
 - **Purchase Price**: Commercial property purchase price (default: $1,970,000) - with hover text explaining "Purchase Price or Amount we want to offer"
 - **% Down**: Percentage of purchase price paid upfront (default: 30%) - with detailed hover explanation about loan requirements
 - **Amount Down**: Calculated field with color coding (Green ≤$500K, Orange $500K-$750K, Red >$750K)
@@ -80,6 +83,19 @@ The app will open in your browser at `http://localhost:8501`
 - **State Lookup Tables**: 
   - Tax rates: AZ: 0.62%, CA: 1.25%, IN: 1.37%, NV: 0.65%, TX: 1.7%, MI: 3.21%
   - Insurance rates: AZ: 0.5%, CA: 1.25%, IN: 0.5%, NV: 0.5%, TX: 0.5%, MI: 0.5%
+
+## Technical Features
+
+### Input System
+- **Callback-Based Updates**: All inputs use `on_change` callbacks to prevent race conditions
+- **Immediate Response**: No sticky behavior - inputs update instantly without multiple clicks
+- **Query Parameter Sync**: All values automatically saved to URL for sharing
+- **Session State Management**: Reliable state persistence across reruns
+
+### URL Sharing
+- **Complete State Preservation**: Property type, all input values, and state selections preserved in URLs
+- **Cross-Platform Compatibility**: Shared links work across different devices and browsers
+- **Bookmark-Friendly**: All calculator states can be bookmarked for future reference
 
 ## Excel Source File
 All commercial calculations are derived directly from: `Commercial_Prop_Screening_Tool.xlsx`
