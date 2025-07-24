@@ -97,6 +97,20 @@ The app will open in your browser at `http://localhost:8501`
 - **Cross-Platform Compatibility**: Shared links work across different devices and browsers
 - **Bookmark-Friendly**: All calculator states can be bookmarked for future reference
 
+## Future Roadmap
+
+### Phase 1: Property URL Integration (Next)
+- **Property URL Field**: Add URL input fields for both residential and commercial properties
+- **Listing URL Storage**: Property listing URLs (LoopNet, Zillow, etc.) preserved in query parameters
+- **Load Property Details Button**: One-click button to open property listings in new tabs
+- **Enhanced URL Sharing**: Shared calculator URLs will include property listing URLs for complete context
+
+### Phase 2: Auto-Population (Future)
+- **Smart Data Extraction**: Enter a property listing URL to automatically populate calculator fields
+- **Supported Data Points**: Purchase price, annual rent/income, property taxes, and other listing details
+- **Multi-Platform Support**: Integration with major listing platforms (LoopNet, Zillow, commercial sites)
+- **Time-Saving Workflow**: Eliminate manual data entry by pulling information directly from listings
+
 ## Excel Source File
 All commercial calculations are derived directly from: `Commercial_Prop_Screening_Tool.xlsx`
 - Cell references maintained for formula accuracy
