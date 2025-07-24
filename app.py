@@ -5,8 +5,22 @@ import plotly.express as px
 st.set_page_config(layout="wide")
 st.title("Property Investment Calculator")
 
-# Property type selection
-property_type = st.radio("Property Type", ["Residential", "Commercial"], horizontal=True)
+# Initialize property type in query params
+if "property_type" not in st.query_params:
+    st.query_params["property_type"] = "Residential"
+
+# Property type selection callback
+def update_property_type():
+    st.query_params["property_type"] = st.session_state.property_type_radio
+
+property_type = st.radio("Property Type", ["Residential", "Commercial"], 
+                        key="property_type_radio",
+                        index=0 if st.query_params["property_type"] == "Residential" else 1,
+                        horizontal=True,
+                        on_change=update_property_type)
+
+# Property type explanation
+st.write("**Residential**: 4 units or less  |  **Commercial**: 5 units or more")
 
 if property_type == "Residential":
     # Initialize query params with defaults if not present
@@ -21,23 +35,44 @@ if property_type == "Residential":
     if "monthly_rent" not in st.query_params:
         st.query_params["monthly_rent"] = "5000"
     if "state" not in st.query_params:
-        st.query_params["state"] = "TX"
+        st.query_params["state"] = "CA"
+
+    # Residential input callbacks
+    def update_purchase_price():
+        st.query_params["purchase_price"] = str(st.session_state.purchase_price_input)
+    
+    def update_down_payment():
+        st.query_params["down_payment"] = str(st.session_state.down_payment_input)
+    
+    def update_interest_rate():
+        st.query_params["interest_rate"] = str(st.session_state.interest_rate_input)
+    
+    def update_loan_years():
+        st.query_params["loan_years"] = str(st.session_state.loan_years_input)
+    
+    def update_monthly_rent():
+        st.query_params["monthly_rent"] = str(st.session_state.monthly_rent_input)
+    
+    def update_state():
+        st.query_params["state"] = st.session_state.state_input
 
     # Sidebar inputs
     with st.sidebar:
         st.header("Property Details")
-        purchase_price = st.number_input("Purchase Price", value=int(st.query_params["purchase_price"]), step=None, format="%d")
-        if purchase_price != int(st.query_params["purchase_price"]):
-            st.query_params["purchase_price"] = str(purchase_price)
+        purchase_price = st.number_input("Purchase Price", 
+                                       value=int(st.query_params["purchase_price"]), 
+                                       step=None, format="%d",
+                                       key="purchase_price_input",
+                                       on_change=update_purchase_price)
         
         # Display formatted purchase price
         st.write(f"**Purchase Price:** ${purchase_price:,.0f}")
         # Down Payment
-        down_payment_value = st.number_input("Down Payment %", value=int(st.query_params["down_payment"]), min_value=0, max_value=100, step=1)
-        
-        # Update query params
-        if down_payment_value != int(st.query_params["down_payment"]):
-            st.query_params["down_payment"] = str(down_payment_value)
+        down_payment_value = st.number_input("Down Payment %", 
+                                           value=int(st.query_params["down_payment"]), 
+                                           min_value=0, max_value=100, step=1,
+                                           key="down_payment_input",
+                                           on_change=update_down_payment)
         
         down_payment_pct = down_payment_value / 100
         
@@ -46,26 +81,30 @@ if property_type == "Residential":
         st.metric("Down Payment Amount", f"${amount_down:,.2f}")
         
         # Interest Rate
-        interest_rate_value = st.number_input("Interest Rate %", value=float(st.query_params["interest_rate"]), min_value=0.0, max_value=10.0, step=0.1)
-        
-        # Update query params
-        if abs(interest_rate_value - float(st.query_params["interest_rate"])) > 0.01:
-            st.query_params["interest_rate"] = str(interest_rate_value)
+        interest_rate_value = st.number_input("Interest Rate %", 
+                                            value=float(st.query_params["interest_rate"]), 
+                                            min_value=0.0, max_value=10.0, step=0.1,
+                                            key="interest_rate_input",
+                                            on_change=update_interest_rate)
         
         interest_rate = interest_rate_value / 100
-        loan_years = st.selectbox("Loan Term (Years)", [15, 30], index=0 if st.query_params["loan_years"] == "15" else 1)
-        if loan_years != int(st.query_params["loan_years"]):
-            st.query_params["loan_years"] = str(loan_years)
+        loan_years = st.selectbox("Loan Term (Years)", [15, 30], 
+                                index=0 if st.query_params["loan_years"] == "15" else 1,
+                                key="loan_years_input",
+                                on_change=update_loan_years)
             
-        monthly_rent = st.number_input("Expected Monthly Rent", value=int(st.query_params["monthly_rent"]), step=100)
-        if monthly_rent != int(st.query_params["monthly_rent"]):
-            st.query_params["monthly_rent"] = str(monthly_rent)
+        monthly_rent = st.number_input("Expected Monthly Rent", 
+                                     value=int(st.query_params["monthly_rent"]), 
+                                     step=100,
+                                     key="monthly_rent_input",
+                                     on_change=update_monthly_rent)
         
         st.header("Location")
         states = ["AZ", "CA", "IN", "NV", "TX", "MI"]
-        state = st.selectbox("State", states, index=states.index(st.query_params["state"]))
-        if state != st.query_params["state"]:
-            st.query_params["state"] = state
+        state = st.selectbox("State", states, 
+                           index=states.index(st.query_params["state"]),
+                           key="state_input",
+                           on_change=update_state)
         
         TAX_RATES = {
             "AZ": 0.0062,
@@ -189,7 +228,7 @@ elif property_type == "Commercial":
     
     # Initialize commercial query params with Excel defaults
     if "comm_state" not in st.query_params:
-        st.query_params["comm_state"] = "TX"
+        st.query_params["comm_state"] = "CA"
     if "comm_purchase_price" not in st.query_params:
         st.query_params["comm_purchase_price"] = "1970000"
     if "comm_down_payment" not in st.query_params:
@@ -226,27 +265,55 @@ elif property_type == "Commercial":
         "MI": 0.005
     }
     
+    # Commercial input callbacks
+    def update_comm_purchase_price():
+        st.query_params["comm_purchase_price"] = str(st.session_state.comm_purchase_price_input)
+    
+    def update_comm_down_payment():
+        st.query_params["comm_down_payment"] = str(st.session_state.comm_down_payment_input)
+    
+    def update_comm_gross_rents():
+        st.query_params["comm_annual_gross_rents"] = str(st.session_state.comm_gross_rents_input)
+    
+    def update_comm_noi_listing():
+        st.query_params["comm_annual_noi_listing"] = str(st.session_state.comm_noi_input)
+    
+    def update_comm_vacancy_rate():
+        st.query_params["comm_vacancy_rate"] = str(st.session_state.comm_vacancy_input)
+    
+    def update_comm_other_expenses():
+        st.query_params["comm_other_expenses"] = str(st.session_state.comm_expenses_input)
+    
+    def update_comm_interest_rate():
+        st.query_params["comm_interest_rate"] = str(st.session_state.comm_interest_input)
+    
+    def update_comm_loan_years():
+        st.query_params["comm_loan_years"] = str(st.session_state.comm_loan_years_input)
+    
+    def update_comm_state():
+        st.query_params["comm_state"] = st.session_state.comm_state_input
+
     # Commercial sidebar inputs
     with st.sidebar:
         st.header("Commercial Property Details")
         
-        # State selection
-        states = ["AZ", "CA", "IN", "NV", "TX", "MI"]
-        comm_state = st.selectbox("State", states, index=states.index(st.query_params["comm_state"]))
-        if comm_state != st.query_params["comm_state"]:
-            st.query_params["comm_state"] = comm_state
-        
         # Purchase Price
-        comm_purchase_price = st.number_input("Purchase Price", value=int(st.query_params["comm_purchase_price"]), step=None, format="%d", help="Purchase Price or Amount we want to offer")
-        if comm_purchase_price != int(st.query_params["comm_purchase_price"]):
-            st.query_params["comm_purchase_price"] = str(comm_purchase_price)
+        comm_purchase_price = st.number_input("Purchase Price", 
+                                             value=int(st.query_params["comm_purchase_price"]), 
+                                             step=None, format="%d", 
+                                             help="Purchase Price or Amount we want to offer",
+                                             key="comm_purchase_price_input",
+                                             on_change=update_comm_purchase_price)
         
         st.write(f"**Purchase Price:** ${comm_purchase_price:,.0f}")
         
         # Down Payment %
-        comm_down_payment_pct = st.number_input("% Down Payment", value=int(st.query_params["comm_down_payment"]), min_value=0, max_value=100, step=1, help="Standard % down is 25% for Non-owner occupied Resi loans. 30%+ may be required for hard money but the interest will be much higher.\n\nFor commercial loans of 5 units or more, the minimum down should be 30% down is a more safe bet, with 65% LTV more ideal for commercial lenders.\n\nTo evaluate whether more money down makes this a good deal or not, 1st try 100%. If the cash flow is not positive with 100% down, then it does not make sense at all at this price, with this rent, or with this overhead.")
-        if comm_down_payment_pct != int(st.query_params["comm_down_payment"]):
-            st.query_params["comm_down_payment"] = str(comm_down_payment_pct)
+        comm_down_payment_pct = st.number_input("% Down Payment", 
+                                               value=int(st.query_params["comm_down_payment"]), 
+                                               min_value=0, max_value=100, step=1, 
+                                               help="Standard % down is 25% for Non-owner occupied Resi loans. 30%+ may be required for hard money but the interest will be much higher.\n\nFor commercial loans of 5 units or more, the minimum down should be 30% down is a more safe bet, with 65% LTV more ideal for commercial lenders.\n\nTo evaluate whether more money down makes this a good deal or not, 1st try 100%. If the cash flow is not positive with 100% down, then it does not make sense at all at this price, with this rent, or with this overhead.",
+                                               key="comm_down_payment_input",
+                                               on_change=update_comm_down_payment)
         
         # Calculate Amount Down with color coding 
         amount_down = comm_purchase_price * (comm_down_payment_pct / 100)
@@ -266,36 +333,55 @@ elif property_type == "Commercial":
         
         
         # Annual Gross Rents
-        comm_annual_gross_rents = st.number_input("Annual Gross Rents", value=int(st.query_params["comm_annual_gross_rents"]), step=1000, help="Typically provided in the listing on LoopNet, etc.")
-        if comm_annual_gross_rents != int(st.query_params["comm_annual_gross_rents"]):
-            st.query_params["comm_annual_gross_rents"] = str(comm_annual_gross_rents)
+        comm_annual_gross_rents = st.number_input("Annual Gross Rents", 
+                                                 value=int(st.query_params["comm_annual_gross_rents"]), 
+                                                 step=1000, 
+                                                 help="Typically provided in the listing on LoopNet, etc.",
+                                                 key="comm_gross_rents_input",
+                                                 on_change=update_comm_gross_rents)
         
         # Annual NOI from Listing
-        comm_annual_noi_listing = st.number_input("Annual NOI from Listing", value=int(st.query_params["comm_annual_noi_listing"]), step=1000)
-        if comm_annual_noi_listing != int(st.query_params["comm_annual_noi_listing"]):
-            st.query_params["comm_annual_noi_listing"] = str(comm_annual_noi_listing)
+        comm_annual_noi_listing = st.number_input("Annual NOI from Listing", 
+                                                 value=int(st.query_params["comm_annual_noi_listing"]), 
+                                                 step=1000,
+                                                 key="comm_noi_input",
+                                                 on_change=update_comm_noi_listing)
         
         # Vacancy Rate
-        comm_vacancy_rate = st.number_input("Vacancy Rate %", value=int(st.query_params["comm_vacancy_rate"]), min_value=0, max_value=50, step=1)
-        if comm_vacancy_rate != int(st.query_params["comm_vacancy_rate"]):
-            st.query_params["comm_vacancy_rate"] = str(comm_vacancy_rate)
+        comm_vacancy_rate = st.number_input("Vacancy Rate %", 
+                                           value=int(st.query_params["comm_vacancy_rate"]), 
+                                           min_value=0, max_value=50, step=1,
+                                           key="comm_vacancy_input",
+                                           on_change=update_comm_vacancy_rate)
         
         # All Other Operating Expenses
-        comm_other_expenses = st.number_input("All Other Operating Expenses", value=int(st.query_params["comm_other_expenses"]), step=500)
-        if comm_other_expenses != int(st.query_params["comm_other_expenses"]):
-            st.query_params["comm_other_expenses"] = str(comm_other_expenses)
+        comm_other_expenses = st.number_input("All Other Operating Expenses", 
+                                             value=int(st.query_params["comm_other_expenses"]), 
+                                             step=500,
+                                             key="comm_expenses_input",
+                                             on_change=update_comm_other_expenses)
         
         st.header("Loan Details")
         # Interest Rate
-        comm_interest_rate_value = st.number_input("Interest Rate %", value=float(st.query_params["comm_interest_rate"]), min_value=0.0, max_value=20.0, step=0.1)
-        if abs(comm_interest_rate_value - float(st.query_params["comm_interest_rate"])) > 0.01:
-            st.query_params["comm_interest_rate"] = str(comm_interest_rate_value)
+        comm_interest_rate_value = st.number_input("Interest Rate %", 
+                                                  value=float(st.query_params["comm_interest_rate"]), 
+                                                  min_value=0.0, max_value=20.0, step=0.1,
+                                                  key="comm_interest_input",
+                                                  on_change=update_comm_interest_rate)
         
         # Loan Period
         loan_years_options = list(range(1, 31))  # 1 to 30 years
-        comm_loan_years = st.selectbox("Loan Period (Years)", loan_years_options, index=loan_years_options.index(int(st.query_params["comm_loan_years"])))
-        if comm_loan_years != int(st.query_params["comm_loan_years"]):
-            st.query_params["comm_loan_years"] = str(comm_loan_years)
+        comm_loan_years = st.selectbox("Loan Period (Years)", loan_years_options, 
+                                     index=loan_years_options.index(int(st.query_params["comm_loan_years"])),
+                                     key="comm_loan_years_input",
+                                     on_change=update_comm_loan_years)
+        
+        st.header("Location")
+        states = ["AZ", "CA", "IN", "NV", "TX", "MI"]
+        comm_state = st.selectbox("State", states, 
+                                index=states.index(st.query_params["comm_state"]),
+                                key="comm_state_input",
+                                on_change=update_comm_state)
         
         st.header("Lookup Rates")
         selected_tax_rate = COMMERCIAL_TAX_RATES[comm_state]
