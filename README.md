@@ -60,6 +60,7 @@
 ### Universal Features
 - **Instant Updates** → No sticky inputs or multiple clicks required
 - **Shareable Analysis** → Complete calculations preserved in URL for easy sharing
+- **Property URL Integration** → Store and access listing URLs directly from calculator
 - **State-Specific Data** → Tax and insurance rates for 6 major investment markets  
 - **Visual Indicators** → Color-coded metrics for quick decision making
 
@@ -83,13 +84,14 @@
 
 ## 🚀 Future Roadmap
 
-### Phase 1: Property URL Integration (Coming Soon)
-Transform your workflow with **one-click property analysis**:
-- **Property URL Fields** → Store listing URLs (LoopNet, Zillow, etc.) alongside calculations
-- **Quick Access Button** → Open property listings in new tabs directly from calculator
-- **Enhanced Sharing** → Send calculator URLs with property context included
+### ✅ Phase 1: Property URL Integration (Completed!)
+**One-click property access is now live**:
+- ✅ **Property URL Fields** → Store listing URLs (LoopNet, Zillow, etc.) alongside calculations
+- ✅ **"View Property Listing" Button** → Opens property listings in new tabs with single click
+- ✅ **Enhanced Sharing** → Calculator URLs now include property context for team collaboration
+- ✅ **Complete URL Preservation** → Share analysis with direct access to original listing
 
-### Phase 2: Auto-Population (Future Vision)
+### Phase 2: Auto-Population (Next Up)
 **Eliminate manual data entry entirely**:
 - **Smart URL Parsing** → Paste listing URL, auto-fill purchase price, rents, taxes
 - **Multi-Platform Support** → LoopNet, Zillow, Crexi, and other major listing sites

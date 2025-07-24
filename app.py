@@ -36,6 +36,8 @@ if property_type == "Residential":
         st.query_params["monthly_rent"] = "5000"
     if "state" not in st.query_params:
         st.query_params["state"] = "CA"
+    if "property_url" not in st.query_params:
+        st.query_params["property_url"] = ""
 
     # Residential input callbacks
     def update_purchase_price():
@@ -55,6 +57,9 @@ if property_type == "Residential":
     
     def update_state():
         st.query_params["state"] = st.session_state.state_input
+    
+    def update_property_url():
+        st.query_params["property_url"] = st.session_state.property_url_input
 
     # Sidebar inputs
     with st.sidebar:
@@ -118,6 +123,35 @@ if property_type == "Residential":
         # Display the tax rate for the selected state (converted to a percentage)
         selected_tax_rate = TAX_RATES[state]
         st.metric("Tax Rate", f"{selected_tax_rate * 100:.2f}%")
+        
+        st.header("Property URL")
+        property_url = st.text_input("Property Listing URL", 
+                                   value=st.query_params["property_url"],
+                                   placeholder="https://www.zillow.com/...",
+                                   help="Link to property listing (Zillow, Realtor.com, etc.)",
+                                   key="property_url_input",
+                                   on_change=update_property_url)
+        
+        if property_url.strip():
+            try:
+                st.link_button("View Property Listing", property_url)
+            except AttributeError:
+                # Fallback for older Streamlit versions
+                st.markdown(f'''
+                <a href="{property_url}" target="_blank" style="
+                    display: inline-block;
+                    padding: 0.25rem 0.75rem;
+                    background-color: #ff4b4b;
+                    color: white;
+                    text-decoration: none;
+                    border-radius: 0.25rem;
+                    border: 1px solid transparent;
+                    text-align: center;
+                    font-weight: 400;
+                    font-size: 14px;
+                    cursor: pointer;
+                ">View Property Listing</a>
+                ''', unsafe_allow_html=True)
 
     # Calculations
     loan_amount = purchase_price * (1 - down_payment_pct)
@@ -245,6 +279,8 @@ elif property_type == "Commercial":
         st.query_params["comm_loan_years"] = "25"
     if "comm_interest_rate" not in st.query_params:
         st.query_params["comm_interest_rate"] = "6.5"
+    if "comm_property_url" not in st.query_params:
+        st.query_params["comm_property_url"] = ""
     
     # Commercial tax and insurance rates
     COMMERCIAL_TAX_RATES = {
@@ -292,6 +328,9 @@ elif property_type == "Commercial":
     
     def update_comm_state():
         st.query_params["comm_state"] = st.session_state.comm_state_input
+    
+    def update_comm_property_url():
+        st.query_params["comm_property_url"] = st.session_state.comm_property_url_input
 
     # Commercial sidebar inputs
     with st.sidebar:
@@ -388,6 +427,35 @@ elif property_type == "Commercial":
         selected_insurance_rate = COMMERCIAL_INSURANCE_RATES[comm_state]
         st.metric("Tax Rate", f"{selected_tax_rate * 100:.2f}%")
         st.metric("Insurance Rate", f"{selected_insurance_rate * 100:.1f}%")
+        
+        st.header("Property URL")
+        comm_property_url = st.text_input("Property Listing URL", 
+                                        value=st.query_params["comm_property_url"],
+                                        placeholder="https://www.loopnet.com/...",
+                                        help="Link to property listing (LoopNet, Crexi, etc.)",
+                                        key="comm_property_url_input",
+                                        on_change=update_comm_property_url)
+        
+        if comm_property_url.strip():
+            try:
+                st.link_button("View Property Listing", comm_property_url)
+            except AttributeError:
+                # Fallback for older Streamlit versions
+                st.markdown(f'''
+                <a href="{comm_property_url}" target="_blank" style="
+                    display: inline-block;
+                    padding: 0.25rem 0.75rem;
+                    background-color: #ff4b4b;
+                    color: white;
+                    text-decoration: none;
+                    border-radius: 0.25rem;
+                    border: 1px solid transparent;
+                    text-align: center;
+                    font-weight: 400;
+                    font-size: 14px;
+                    cursor: pointer;
+                ">View Property Listing</a>
+                ''', unsafe_allow_html=True)
     
     # Commercial calculations based on Excel formulas
     

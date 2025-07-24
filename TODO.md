@@ -75,26 +75,26 @@
 - [x] Redesign README with industry best practices and user-focused structure *(Completed)*
 - [x] Transform technical documentation into compelling user experience *(Completed)*
 
-## 🚧 NEXT UP - PHASE 1: Property URL Integration
+## ✅ COMPLETED - PHASE 1: Property URL Integration (Jan 2025)
 
-### 1.1: Property URL Input Fields
-- [ ] Add property URL input field for residential properties in sidebar
-- [ ] Add property URL input field for commercial properties in sidebar
-- [ ] Add button next to each URL field (button text TBD - maybe "View Property" or "Open Listing")
-- [ ] Button opens the URL in a new tab when clicked
+### 1.1: Property URL Input Fields ✅
+- [x] Add property URL input field for residential properties in sidebar *(Completed)*
+- [x] Add property URL input field for commercial properties in sidebar *(Completed)*
+- [x] Add "View Property Listing" button next to each URL field *(Completed)*
+- [x] Button opens the URL in a new tab when clicked using `st.link_button` or styled fallback *(Completed)*
 
-### 1.2: URL Storage & Query Parameters
-- [ ] Include property URLs in query parameters so they're preserved in shareable calculator URLs
-- [ ] Add property URL to query parameters for residential (`property_url`)
-- [ ] Add property URL to query parameters for commercial (`comm_property_url`)
-- [ ] Implement callback-based updates for URL fields
+### 1.2: URL Storage & Query Parameters ✅
+- [x] Include property URLs in query parameters so they're preserved in shareable calculator URLs *(Completed)*
+- [x] Add property URL to query parameters for residential (`property_url`) *(Completed)*
+- [x] Add property URL to query parameters for commercial (`comm_property_url`) *(Completed)*
+- [x] Implement callback-based updates for URL fields *(Completed)*
 
-### 1.3: Test Complete Sharing Experience
-- [ ] Test that shared links include both calculator settings AND property URLs
-- [ ] Verify recipient gets complete context: calculations + direct access to property listing
-- [ ] Ensure investment team can share analysis back and forth with full context intact
+### 1.3: Test Complete Sharing Experience ✅
+- [x] Test that shared links include both calculator settings AND property URLs *(Completed)*
+- [x] Verify recipient gets complete context: calculations + direct access to property listing *(Completed)*
+- [x] Ensure investment team can share analysis back and forth with full context intact *(Completed)*
 
-## 🔮 FUTURE - PHASE 2: Auto-Population from URLs
+## 🚧 NEXT UP - PHASE 2: Auto-Population from URLs
 
 ### 2.1: Auto-Population Button & Logic
 - [ ] Add second button next to URL fields (maybe "Get Information" or "Import Data")
@@ -142,8 +142,9 @@
 - **Insurance Rates**: AZ(0.5%), CA(1.25%), IN(0.5%), NV(0.5%), TX(0.5%), MI(0.5%) ✅
 
 ### Context Continuity Notes
-- **Current Status**: Full-featured calculator with URL sharing, responsive inputs, and professional documentation
-- **Architecture**: Streamlit + callback-based inputs + query parameter state management  
-- **Next Milestone**: Property URL integration (Phase 1) to enable investment team collaboration
-- **Use Case**: Investment team shares calculator links with property context - analyze → share → collaborate → decide
-- **Long-term Vision**: Auto-populate sidebar fields from listing URLs (Phase 2) for faster property evaluation
+- **Current Status**: Full-featured calculator with URL sharing, responsive inputs, professional documentation, AND property URL integration
+- **Architecture**: Streamlit + callback-based inputs + query parameter state management + property URL storage
+- **Phase 1 Complete**: Property URL fields with "View Property Listing" buttons that open URLs in new tabs
+- **Current Milestone**: Auto-population from listing URLs (Phase 2) for automated data extraction
+- **Use Case**: Investment team shares calculator links with complete property context - analyze → share → collaborate → decide
+- **Long-term Vision**: One-click property analysis by auto-populating sidebar fields from listing URLs
