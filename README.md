@@ -2,7 +2,7 @@
 
 **Make smarter property investment decisions in seconds.** Instantly analyze residential and commercial properties with comprehensive financial metrics, shareable calculations, and professional-grade accuracy.
 
-🚀 **[Live Demo](https://property-calculator-rb9nmety9ntgmmou3tthpy.streamlit.app/)**
+🚀 **[Live Demo](https://property-calculator-405.streamlit.app/)**
 
 ## 🏆 Why Property Investment Calculator?
 
