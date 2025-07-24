@@ -61,6 +61,7 @@
 - **Instant Updates** → No sticky inputs or multiple clicks required
 - **Shareable Analysis** → Complete calculations preserved in URL for easy sharing
 - **Property URL Integration** → Store and access listing URLs directly from calculator
+- **Enhanced Link Sharing** → Custom favicon and descriptive page titles for professional appearance
 - **State-Specific Data** → Tax and insurance rates for 6 major investment markets  
 - **Visual Indicators** → Color-coded metrics for quick decision making
 

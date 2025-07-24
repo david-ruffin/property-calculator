@@ -2,7 +2,13 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-st.set_page_config(layout="wide")
+st.set_page_config(
+    page_title="Property Investment Calculator - Analyze Real Estate Deals",
+    page_icon="favicon.png",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
 st.title("Property Investment Calculator")
 
 # Initialize property type in query params
