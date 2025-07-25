@@ -11,6 +11,28 @@ st.set_page_config(
 
 st.title("Property Investment Calculator")
 
+# URL parser function
+def parse_property_url(url):
+    """Extract address from LoopNet or Zillow URLs"""
+    if not url:
+        return None
+    
+    try:
+        if "loopnet.com/Listing/" in url or "zillow.com/homedetails/" in url:
+            parts = url.split("/")
+            if len(parts) > 4:
+                address_part = parts[4]
+                # Replace hyphens with spaces
+                address = address_part.replace("-", " ")
+                # Add comma before state (last 2 characters)
+                if len(address) > 2:
+                    address = address[:-2] + ", " + address[-2:]
+                return address
+    except:
+        pass
+    
+    return None
+
 # Initialize property type in query params
 if "property_type" not in st.query_params:
     st.query_params["property_type"] = "Residential"
@@ -27,6 +49,16 @@ property_type = st.radio("Property Type", ["Residential", "Commercial"],
 
 # Property type explanation
 st.write("**Residential**: 4 units or less  |  **Commercial**: 5 units or more")
+
+# Display parsed address as clickable link if available
+if property_type == "Residential" and "property_url" in st.query_params and st.query_params["property_url"]:
+    address = parse_property_url(st.query_params["property_url"])
+    if address:
+        st.markdown(f"**Address:** <a href='{st.query_params['property_url']}' target='_blank'>{address}</a>", unsafe_allow_html=True)
+elif property_type == "Commercial" and "comm_property_url" in st.query_params and st.query_params["comm_property_url"]:
+    address = parse_property_url(st.query_params["comm_property_url"])
+    if address:
+        st.markdown(f"**Address:** <a href='{st.query_params['comm_property_url']}' target='_blank'>{address}</a>", unsafe_allow_html=True)
 
 if property_type == "Residential":
     # Initialize query params with defaults if not present
