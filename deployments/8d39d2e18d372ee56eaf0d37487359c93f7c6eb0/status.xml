@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<deployment>
+  <id>8d39d2e18d372ee56eaf0d37487359c93f7c6eb0</id>
+  <author>sudo</author>
+  <deployer>GitHub</deployer>
+  <authorEmail>ruffin4it@gmail.com</authorEmail>
+  <message>Add URL parsing to display property addresses dynamically
+    
+    - Parse LoopNet and Zillow URLs to extract property addresses
+    - Display clickable address in main area for both residential and commercial
+    - Address opens property listing in new tab when clicked
+    - Maintains consistent design across both property types
+    
+    🤖 Generated with [Claude Code](https://claude.ai/code)
+    
+    Co-Authored-By: Claude &lt;noreply@anthropic.com&gt;</message>
+  <progress></progress>
+  <status>Failed</status>
+  <statusText>Deployment has been stopped due to SCM container restart. The restart can happen due to a management operation on site. Do not perform a management operation and a deployment operation in quick succession. Adding a small delay can help avoid any conflicts.</statusText>
+  <lastSuccessEndTime />
+  <receivedTime>2025-07-25T15:56:07.0602675Z</receivedTime>
+  <startTime>2025-07-25T15:56:08.6470715Z</startTime>
+  <endTime>2025-07-25T16:00:54.3369157Z</endTime>
+  <complete>True</complete>
+  <is_temp>False</is_temp>
+  <is_readonly>False</is_readonly>
+  <buildSummary />
+</deployment>
