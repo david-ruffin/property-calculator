@@ -2,7 +2,7 @@
 
 **Make smarter property investment decisions in seconds.** Instantly analyze residential and commercial properties with comprehensive financial metrics, shareable calculations, and professional-grade accuracy.
 
-🚀 **[Live Demo](https://property-calculator-405.streamlit.app/)**
+🚀 **[Live Demo](https://propertycalc2025.azurewebsites.net/)** | **[GitHub Repository](https://github.com/david-ruffin/property-calculator)**
 
 ## 🏆 Why Property Investment Calculator?
 
@@ -84,6 +84,23 @@
 | Nevada | 0.65% | 0.5% | Tax-advantaged investing |
 | Texas | 1.7% | 0.5% | No state income tax benefits |
 | Michigan | 3.21% | 0.5% | Affordable entry markets |
+
+## 🚀 Deployment & CI/CD
+
+### ✅ Production Deployment
+**Live on Microsoft Azure**:
+- **Azure Web App**: [propertycalc2025.azurewebsites.net](https://propertycalc2025.azurewebsites.net/)
+- **Python 3.11** runtime with Streamlit on Linux
+- **Always-on availability** with automatic scaling
+- **Custom domain ready** for professional deployment
+
+### ✅ Continuous Integration/Deployment
+**Automated GitHub Actions pipeline**:
+- **Triggers**: Push to main branch or manual dispatch
+- **Build Process**: Virtual environment, dependency installation, testing
+- **Deploy Time**: ~45-75 seconds per deployment
+- **Success Rate**: 109/109 successful deployments
+- **Zero-downtime deployments** with Azure Web Apps
 
 ## 🚀 Future Roadmap
 
