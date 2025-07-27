@@ -67,7 +67,7 @@ if property_type == "Residential":
     if "down_payment" not in st.query_params:
         st.query_params["down_payment"] = "20"
     if "interest_rate" not in st.query_params:
-        st.query_params["interest_rate"] = "2.0"
+        st.query_params["interest_rate"] = "6.5"
     if "loan_years" not in st.query_params:
         st.query_params["loan_years"] = "15"
     if "monthly_rent" not in st.query_params:
